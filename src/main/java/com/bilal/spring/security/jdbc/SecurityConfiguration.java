@@ -23,17 +23,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
-                .withDefaultSchema()
-                .withUser(
-                        User.withUsername("user")
-                                .password("pass")
-                                .roles("USER")
-                )
-                .withUser(
-                        User.withUsername("bilal")
-                                .password("adminpass")
-                                .roles("ADMIN")
-                );
+                .usersByUsernameQuery("select username,password,enabled "
+                +"from users "
+                +"where username= ?")
+                .authoritiesByUsernameQuery("select username,authority "
+                +"from authorities "
+                +"where username = ?");
     }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
